@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { PrismaClient, OrderStatus, InvoiceStatus } from '@prisma/client';
 import { INTENTS, IntentType, matchQuickPattern } from '../ai/intents';
 import {
@@ -10,9 +10,9 @@ import { AIResponse, ParsedIntent } from '../types';
 
 const prisma = new PrismaClient();
 
-// Initialize OpenAI client (will be null if no API key)
-const openai = process.env.OPENAI_API_KEY
-  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+// Initialize Gemini client (will be null if no API key)
+const genAI = process.env.GEMINI_API_KEY
+  ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
   : null;
 
 // In-memory storage for pending actions (in production, use Redis)
@@ -35,14 +35,14 @@ class AIService {
       };
     }
 
-    // If no OpenAI key, return unknown intent
-    if (!openai) {
+    // If no Gemini key, return unknown intent
+    if (!genAI) {
       return {
         intent: INTENTS.UNKNOWN,
         confidence: 0,
         entities: {},
         needsClarification: true,
-        clarificationQuestion: 'AI features require OpenAI API key configuration.',
+        clarificationQuestion: 'AI features require Gemini API key configuration.',
       };
     }
 
@@ -64,21 +64,23 @@ class AIService {
     });
 
     try {
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4-turbo-preview',
-        messages: [
-          { role: 'system', content: INTENT_PARSER_SYSTEM_PROMPT },
-          { role: 'user', content: prompt },
-        ],
-        response_format: { type: 'json_object' },
-        temperature: 0.1,
-        max_tokens: 500,
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-1.5-flash',
+        generationConfig: {
+          temperature: 0.1,
+          maxOutputTokens: 500,
+          responseMimeType: 'application/json',
+        },
       });
 
-      const content = response.choices[0].message.content;
+      const fullPrompt = `${INTENT_PARSER_SYSTEM_PROMPT}\n\n${prompt}`;
+      const result = await model.generateContent(fullPrompt);
+      const response = result.response;
+      const content = response.text();
+
       return JSON.parse(content || '{}');
     } catch (error) {
-      console.error('OpenAI parsing error:', error);
+      console.error('Gemini parsing error:', error);
       return {
         intent: INTENTS.UNKNOWN,
         confidence: 0,
