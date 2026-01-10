@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Order, CartItem, MenuItem, RestaurantTable } from '../types';
+import type { Order, CartItem, MenuItem, RestaurantTable } from '@/types';
 
 interface OrderState {
   // Active orders

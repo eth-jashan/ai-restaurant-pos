@@ -1,9 +1,11 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { clsx } from 'clsx';
 import { Search, Plus, Edit2, Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
-import { apiClient } from '../services/api';
-import { useMenuStore } from '../stores/menuStore';
-import type { MenuItem, Category } from '../types';
+import { apiClient } from '@/services/api';
+import { useMenuStore } from '@/stores/menuStore';
+import type { MenuItem } from '@/types';
 
 export default function MenuPage() {
   const { categories, menuItems, selectedCategory, searchQuery, setCategories, setMenuItems, setSelectedCategory, setSearchQuery, updateItemAvailability } = useMenuStore();

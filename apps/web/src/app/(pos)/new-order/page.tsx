@@ -1,17 +1,19 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
-import { Search, Plus, Minus, Trash2, Send, ShoppingCart, X } from 'lucide-react';
-import { apiClient } from '../services/api';
-import { useMenuStore } from '../stores/menuStore';
-import { useOrderStore } from '../stores/orderStore';
-import type { MenuItem, Category } from '../types';
+import { Search, Plus, Minus, Trash2, Send, ShoppingCart } from 'lucide-react';
+import { apiClient } from '@/services/api';
+import { useMenuStore } from '@/stores/menuStore';
+import { useOrderStore } from '@/stores/orderStore';
+import type { MenuItem } from '@/types';
 
 export default function NewOrderPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const { categories, menuItems, selectedCategory, searchQuery, setCategories, setMenuItems, setSelectedCategory, setSearchQuery } = useMenuStore();
-  const { cart, selectedTable, orderType, covers, customerName, customerPhone, addToCart, updateCartItem, removeFromCart, clearCart, setOrderType, setCovers, setCustomerName, setCustomerPhone, getCartTotal, resetOrderForm } = useOrderStore();
+  const { cart, selectedTable, orderType, covers, addToCart, updateCartItem, removeFromCart, clearCart, setOrderType, setCovers, getCartTotal, resetOrderForm } = useOrderStore();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,8 +57,6 @@ export default function NewOrderPage() {
         orderType,
         tableId: selectedTable?.id,
         covers: orderType === 'DINE_IN' ? covers : undefined,
-        customerName: customerName || undefined,
-        customerPhone: customerPhone || undefined,
         items: cart.map((item) => ({
           menuItemId: item.menuItem.id,
           quantity: item.quantity,
@@ -67,7 +67,7 @@ export default function NewOrderPage() {
 
       await apiClient.orders.create(orderData);
       resetOrderForm();
-      navigate('/orders');
+      router.push('/orders');
     } catch (error) {
       console.error('Failed to create order:', error);
     } finally {

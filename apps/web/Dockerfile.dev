@@ -17,5 +17,5 @@ COPY . .
 # Expose port
 EXPOSE 5173
 
-# Start development server with host binding
-CMD ["pnpm", "dev", "--host"]
+# Start Next.js development server
+CMD ["pnpm", "dev"]

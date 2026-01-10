@@ -1,7 +1,9 @@
+'use client';
+
 import { useState, useRef, useEffect, FormEvent } from 'react';
 import { Send, X, Bot, Loader2, Check, XCircle } from 'lucide-react';
 import { clsx } from 'clsx';
-import { useAIStore } from '../../stores/aiStore';
+import { useAIStore } from '@/stores/aiStore';
 
 interface Props {
   isOpen: boolean;

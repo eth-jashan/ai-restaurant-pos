@@ -1,4 +1,7 @@
-import { NavLink } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
 import {
   LayoutDashboard,
@@ -10,7 +13,7 @@ import {
   Settings,
   LogOut,
 } from 'lucide-react';
-import { useAuthStore } from '../../stores/authStore';
+import { useAuthStore } from '@/stores/authStore';
 
 const navItems = [
   { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -22,8 +25,15 @@ const navItems = [
 ];
 
 export default function Sidebar() {
+  const pathname = usePathname();
+  const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
@@ -48,24 +58,25 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 py-4 overflow-y-auto">
         <ul className="space-y-1 px-3">
-          {navItems.map((item) => (
-            <li key={item.path}>
-              <NavLink
-                to={item.path}
-                className={({ isActive }) =>
-                  clsx(
+          {navItems.map((item) => {
+            const isActive = pathname === item.path;
+            return (
+              <li key={item.path}>
+                <Link
+                  href={item.path}
+                  className={clsx(
                     'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors',
                     isActive
                       ? 'bg-primary-50 text-primary-700 font-medium'
                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                  )
-                }
-              >
-                <item.icon className="w-5 h-5" />
-                <span>{item.label}</span>
-              </NavLink>
-            </li>
-          ))}
+                  )}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span>{item.label}</span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
@@ -91,7 +102,7 @@ export default function Sidebar() {
             Settings
           </button>
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
           >
             <LogOut className="w-4 h-4" />

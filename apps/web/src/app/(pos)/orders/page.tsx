@@ -1,8 +1,10 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { clsx } from 'clsx';
-import { Clock, User, ChefHat, Check, X, Printer, MoreVertical } from 'lucide-react';
-import { apiClient } from '../services/api';
-import type { Order } from '../types';
+import { Clock, ChefHat, Check, X, Printer, MoreVertical } from 'lucide-react';
+import { apiClient } from '@/services/api';
+import type { Order } from '@/types';
 
 const statusConfig: Record<string, { color: string; label: string; bg: string }> = {
   PENDING: { color: 'text-gray-600', label: 'Pending', bg: 'bg-gray-100' },

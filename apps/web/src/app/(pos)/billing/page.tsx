@@ -1,8 +1,10 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { clsx } from 'clsx';
-import { Search, Receipt, CreditCard, Banknote, Smartphone, Printer, Download } from 'lucide-react';
-import { apiClient } from '../services/api';
-import type { Invoice, Order } from '../types';
+import { Receipt, CreditCard, Banknote, Smartphone, Printer, Download } from 'lucide-react';
+import { apiClient } from '@/services/api';
+import type { Invoice, Order } from '@/types';
 
 const statusConfig: Record<string, { color: string; label: string; bg: string }> = {
   UNPAID: { color: 'text-red-600', label: 'Unpaid', bg: 'bg-red-100' },
@@ -198,12 +200,9 @@ export default function BillingPage() {
       {/* Right Panel - Invoice/Payment */}
       <div className="flex-1 bg-white rounded-xl border border-gray-200 flex flex-col">
         {selectedOrder && !selectedInvoice ? (
-          // Generate Invoice View
           <>
             <div className="p-6 border-b">
-              <h2 className="text-xl font-bold text-gray-900">
-                Generate Invoice
-              </h2>
+              <h2 className="text-xl font-bold text-gray-900">Generate Invoice</h2>
               <p className="text-gray-500">
                 Order #{selectedOrder.displayNumber || selectedOrder.orderNumber}
               </p>
@@ -212,9 +211,7 @@ export default function BillingPage() {
               <div className="space-y-3">
                 {selectedOrder.items.map((item) => (
                   <div key={item.id} className="flex justify-between">
-                    <span>
-                      {item.name} x{item.quantity}
-                    </span>
+                    <span>{item.name} x{item.quantity}</span>
                     <span>₹{Number(item.totalPrice).toFixed(0)}</span>
                   </div>
                 ))}
@@ -245,7 +242,6 @@ export default function BillingPage() {
             </div>
           </>
         ) : selectedInvoice ? (
-          // Payment View
           <>
             <div className="p-6 border-b">
               <div className="flex justify-between items-start">
@@ -271,7 +267,6 @@ export default function BillingPage() {
             </div>
 
             <div className="flex-1 p-6 overflow-y-auto">
-              {/* Amount */}
               <div className="text-center mb-8">
                 <p className="text-gray-500">Total Amount</p>
                 <p className="text-4xl font-bold text-gray-900">
@@ -281,7 +276,6 @@ export default function BillingPage() {
 
               {selectedInvoice.status !== 'PAID' && (
                 <>
-                  {/* Payment Method */}
                   <div className="mb-6">
                     <p className="text-sm font-medium text-gray-700 mb-3">Payment Method</p>
                     <div className="grid grid-cols-3 gap-3">
@@ -309,7 +303,6 @@ export default function BillingPage() {
                     </div>
                   </div>
 
-                  {/* Cash Payment */}
                   {paymentMethod === 'CASH' && (
                     <div className="space-y-4">
                       <div>

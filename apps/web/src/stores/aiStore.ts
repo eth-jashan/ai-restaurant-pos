@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { apiClient } from '../services/api';
-import type { AIMessage, AIResponse } from '../types';
+import { apiClient } from '@/services/api';
+import type { AIMessage, AIResponse } from '@/types';
 
 interface AIState {
   messages: AIMessage[];

@@ -1,10 +1,12 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
 import { Users, Clock, Plus } from 'lucide-react';
-import { apiClient } from '../services/api';
-import { useOrderStore } from '../stores/orderStore';
-import type { RestaurantTable, Order } from '../types';
+import { apiClient } from '@/services/api';
+import { useOrderStore } from '@/stores/orderStore';
+import type { RestaurantTable, Order } from '@/types';
 
 interface TableWithOrder extends RestaurantTable {
   orders?: Order[];
@@ -19,7 +21,7 @@ const statusColors: Record<string, { bg: string; text: string; label: string }> 
 };
 
 export default function TablesPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const setSelectedTable = useOrderStore((s) => s.setSelectedTable);
 
   const [tables, setTables] = useState<TableWithOrder[]>([]);
@@ -50,9 +52,9 @@ export default function TablesPage() {
   const handleTableClick = (table: TableWithOrder) => {
     if (table.status === 'AVAILABLE') {
       setSelectedTable(table);
-      navigate('/new-order');
+      router.push('/new-order');
     } else if (table.status === 'OCCUPIED' && table.orders?.[0]) {
-      navigate(`/orders?orderId=${table.orders[0].id}`);
+      router.push(`/orders?orderId=${table.orders[0].id}`);
     }
   };
 

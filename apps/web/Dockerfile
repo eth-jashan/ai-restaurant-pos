@@ -1,5 +1,5 @@
-# Production Dockerfile for Web
-FROM node:20-alpine AS builder
+# Production Dockerfile for Web (Next.js)
+FROM node:20-alpine AS deps
 
 WORKDIR /app
 
@@ -12,19 +12,46 @@ COPY package.json pnpm-lock.yaml* ./
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Copy source and build
+# Builder stage
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Set environment variable for build
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build the application
 RUN pnpm build
 
-# Production image with nginx
-FROM nginx:alpine AS production
+# Production image
+FROM node:20-alpine AS runner
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+WORKDIR /app
 
-# Copy built files
-COPY --from=builder /app/dist /usr/share/nginx/html
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
-EXPOSE 80
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-CMD ["nginx", "-g", "daemon off;"]
+# Copy the standalone output
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]

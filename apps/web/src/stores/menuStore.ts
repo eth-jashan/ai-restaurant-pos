@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Category, MenuItem } from '../types';
+import type { Category, MenuItem } from '@/types';
 
 interface MenuState {
   categories: Category[];

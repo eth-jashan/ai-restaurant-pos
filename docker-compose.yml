@@ -62,7 +62,7 @@ services:
       redis:
         condition: service_healthy
 
-  # Web Frontend (development mode)
+  # Web Frontend (Next.js development mode)
   web:
     build:
       context: ./apps/web
@@ -70,12 +70,12 @@ services:
     container_name: ordermind-web
     restart: unless-stopped
     environment:
-      VITE_API_URL: http://localhost:3001/api/v1
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
     ports:
       - '5173:5173'
     volumes:
       - ./apps/web/src:/app/src
-      - ./apps/web/index.html:/app/index.html
+      - ./apps/web/public:/app/public
     depends_on:
       - api
 

@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { useAuthStore } from '../stores/authStore';
+import { useAuthStore } from '@/stores/authStore';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
 
 // Create axios instance
 export const api: AxiosInstance = axios.create({
@@ -50,11 +50,15 @@ api.interceptors.response.use(
         } catch {
           // Refresh failed - logout
           useAuthStore.getState().logout();
-          window.location.href = '/login';
+          if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+          }
         }
       } else {
         useAuthStore.getState().logout();
-        window.location.href = '/login';
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
       }
     }
 

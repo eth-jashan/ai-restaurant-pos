@@ -1,11 +1,13 @@
+'use client';
+
 import { useState, FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { UtensilsCrossed, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { apiClient } from '../services/api';
-import { useAuthStore } from '../stores/authStore';
+import { apiClient } from '@/services/api';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function LoginPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const login = useAuthStore((s) => s.login);
 
   const [email, setEmail] = useState('owner@spicegarden.com');
@@ -29,7 +31,7 @@ export default function LoginPage() {
 
       const { user, tokens } = response.data.data;
       login(user, tokens.accessToken, tokens.refreshToken);
-      navigate('/dashboard');
+      router.push('/dashboard');
     } catch (err: unknown) {
       const error = err as { response?: { data?: { error?: { message?: string } } } };
       setError(error.response?.data?.error?.message || 'Login failed. Please try again.');
@@ -146,7 +148,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-sm text-gray-500 mt-6">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <a href="#" className="text-primary-600 hover:text-primary-700 font-medium">
             Contact us
           </a>

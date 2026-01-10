@@ -1,6 +1,8 @@
-import { useLocation } from 'react-router-dom';
+'use client';
+
+import { usePathname } from 'next/navigation';
 import { Bot, Bell, Search } from 'lucide-react';
-import { useAIStore } from '../../stores/aiStore';
+import { useAIStore } from '@/stores/aiStore';
 
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -12,11 +14,11 @@ const pageTitles: Record<string, string> = {
 };
 
 export default function Header() {
-  const location = useLocation();
+  const pathname = usePathname();
   const togglePanel = useAIStore((s) => s.togglePanel);
   const isPanelOpen = useAIStore((s) => s.isPanelOpen);
 
-  const title = pageTitles[location.pathname] || 'OrderMind';
+  const title = pageTitles[pathname] || 'OrderMind';
 
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">

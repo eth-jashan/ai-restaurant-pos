@@ -1,4 +1,7 @@
+'use client';
+
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import {
   TrendingUp,
   ShoppingCart,
@@ -7,7 +10,7 @@ import {
   ArrowUpRight,
   Clock,
 } from 'lucide-react';
-import { apiClient } from '../services/api';
+import { apiClient } from '@/services/api';
 
 interface DailySummary {
   totalRevenue: number;
@@ -110,9 +113,9 @@ export default function DashboardPage() {
         <div className="card">
           <div className="card-header flex items-center justify-between">
             <h3 className="font-semibold text-gray-900">Recent Orders</h3>
-            <a href="/orders" className="text-sm text-primary-600 hover:text-primary-700">
+            <Link href="/orders" className="text-sm text-primary-600 hover:text-primary-700">
               View all
-            </a>
+            </Link>
           </div>
           <div className="card-body">
             <div className="space-y-4">
@@ -142,7 +145,7 @@ export default function DashboardPage() {
         {/* Quick Stats */}
         <div className="card">
           <div className="card-header">
-            <h3 className="font-semibold text-gray-900">Today's Timeline</h3>
+            <h3 className="font-semibold text-gray-900">Today&apos;s Timeline</h3>
           </div>
           <div className="card-body">
             <div className="space-y-4">
