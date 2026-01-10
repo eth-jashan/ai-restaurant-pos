@@ -1,6 +1,6 @@
-import { PrismaClient, UserRole } from '@prisma/client';
+import { PrismaClient, UserRole, Prisma } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { JWTPayload } from '../types';
 import { AuthenticationError, ConflictError, NotFoundError, ValidationError } from '../utils/errors';
 
@@ -77,13 +77,25 @@ class AuthService {
       type: 'refresh',
     };
 
-    const accessToken = jwt.sign(accessPayload, process.env.JWT_SECRET!, {
-      expiresIn: this.accessTokenExpiry,
-    });
+    const accessOptions: SignOptions = {
+      expiresIn: this.accessTokenExpiry as string,
+    };
 
-    const refreshToken = jwt.sign(refreshPayload, process.env.JWT_REFRESH_SECRET!, {
-      expiresIn: this.refreshTokenExpiry,
-    });
+    const refreshOptions: SignOptions = {
+      expiresIn: this.refreshTokenExpiry as string,
+    };
+
+    const accessToken = jwt.sign(
+      accessPayload,
+      process.env.JWT_SECRET as jwt.Secret,
+      accessOptions
+    );
+
+    const refreshToken = jwt.sign(
+      refreshPayload,
+      process.env.JWT_REFRESH_SECRET as jwt.Secret,
+      refreshOptions
+    );
 
     // Calculate expiry in seconds
     const expiresIn = this.parseExpiry(this.accessTokenExpiry);
@@ -295,7 +307,7 @@ class AuthService {
     const passwordHash = await bcrypt.hash(ownerData.password, 12);
 
     // Create restaurant and owner in a transaction
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const restaurant = await tx.restaurant.create({
         data: restaurantData,
       });
