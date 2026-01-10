@@ -1,6 +1,6 @@
 import { PrismaClient, UserRole, Prisma } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import jwt, { SignOptions } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { JWTPayload } from '../types';
 import { AuthenticationError, ConflictError, NotFoundError, ValidationError } from '../utils/errors';
 
@@ -58,8 +58,9 @@ export interface AuthUser {
 }
 
 class AuthService {
-  private readonly accessTokenExpiry = process.env.JWT_EXPIRES_IN || '24h';
-  private readonly refreshTokenExpiry = process.env.JWT_REFRESH_EXPIRES_IN || '7d';
+  // Token expiry in seconds
+  private readonly accessTokenExpirySeconds = 86400; // 24 hours
+  private readonly refreshTokenExpirySeconds = 604800; // 7 days
 
   // Generate JWT tokens
   generateTokens(userId: string, restaurantId: string, role: string): TokenPair {
@@ -77,45 +78,23 @@ class AuthService {
       type: 'refresh',
     };
 
-    const accessOptions: SignOptions = {
-      expiresIn: this.accessTokenExpiry as string,
-    };
-
-    const refreshOptions: SignOptions = {
-      expiresIn: this.refreshTokenExpiry as string,
-    };
-
     const accessToken = jwt.sign(
       accessPayload,
       process.env.JWT_SECRET as jwt.Secret,
-      accessOptions
+      { expiresIn: this.accessTokenExpirySeconds }
     );
 
     const refreshToken = jwt.sign(
       refreshPayload,
       process.env.JWT_REFRESH_SECRET as jwt.Secret,
-      refreshOptions
+      { expiresIn: this.refreshTokenExpirySeconds }
     );
 
-    // Calculate expiry in seconds
-    const expiresIn = this.parseExpiry(this.accessTokenExpiry);
-
-    return { accessToken, refreshToken, expiresIn };
-  }
-
-  private parseExpiry(expiry: string): number {
-    const match = expiry.match(/^(\d+)([hmd])$/);
-    if (!match) return 86400; // default 24 hours
-
-    const value = parseInt(match[1]);
-    const unit = match[2];
-
-    switch (unit) {
-      case 'h': return value * 3600;
-      case 'd': return value * 86400;
-      case 'm': return value * 60;
-      default: return 86400;
-    }
+    return {
+      accessToken,
+      refreshToken,
+      expiresIn: this.accessTokenExpirySeconds
+    };
   }
 
   // Login with email/password
