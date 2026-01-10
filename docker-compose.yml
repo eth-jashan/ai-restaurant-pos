@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: ordermind-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ordermind
+      POSTGRES_PASSWORD: ordermind
+      POSTGRES_DB: ordermind
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ordermind']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Redis (for caching and session management)
+  redis:
+    image: redis:7-alpine
+    container_name: ordermind-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # API Server (development mode - uses local source)
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+    container_name: ordermind-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://ordermind:ordermind@postgres:5432/ordermind
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev-jwt-secret-change-in-production
+      JWT_REFRESH_SECRET: dev-refresh-secret-change-in-production
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      PORT: 3001
+      NODE_ENV: development
+      FRONTEND_URL: http://localhost:5173
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./apps/api/src:/app/src
+      - ./apps/api/prisma:/app/prisma
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Web Frontend (development mode)
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile.dev
+    container_name: ordermind-web
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: http://localhost:3001/api/v1
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./apps/web/src:/app/src
+      - ./apps/web/index.html:/app/index.html
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  redis_data:
