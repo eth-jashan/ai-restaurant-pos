@@ -7,7 +7,7 @@ const nextConfig = {
 
   // API rewrites for development (proxy /api to backend)
   async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
     // Extract base URL without the /api/v1 path
     const apiBase = apiUrl.replace(/\/api\/v1$/, '');
 

@@ -33,7 +33,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # API Server (development mode - uses local source)
+  # Django API Server (development mode)
   api:
     build:
       context: ./apps/api
@@ -41,19 +41,19 @@ services:
     container_name: ordermind-api
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://ordermind:ordermind@postgres:5432/ordermind
-      REDIS_URL: redis://redis:6379
-      JWT_SECRET: dev-jwt-secret-change-in-production
-      JWT_REFRESH_SECRET: dev-refresh-secret-change-in-production
+      DEBUG: 'True'
+      DJANGO_SECRET_KEY: dev-secret-key-change-in-production
+      DB_NAME: ordermind
+      DB_USER: ordermind
+      DB_PASSWORD: ordermind
+      DB_HOST: postgres
+      DB_PORT: 5432
       GEMINI_API_KEY: ${GEMINI_API_KEY}
-      PORT: 3001
-      NODE_ENV: development
-      FRONTEND_URL: http://localhost:5173
+      CORS_ALLOWED_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
     ports:
-      - '3001:3001'
+      - '8000:8000'
     volumes:
-      - ./apps/api/src:/app/src
-      - ./apps/api/prisma:/app/prisma
+      - ./apps/api:/app
     depends_on:
       postgres:
         condition: service_healthy
@@ -68,7 +68,7 @@ services:
     container_name: ordermind-web
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
     ports:
       - '5173:5173'
     volumes:

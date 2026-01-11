@@ -1,49 +1,28 @@
-# Production Dockerfile for API
-FROM node:20-alpine AS builder
+# Production Dockerfile for Django API
+FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy package files
-COPY package.json pnpm-lock.yaml* ./
-COPY prisma ./prisma
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
-
-# Generate Prisma client
-RUN pnpm db:generate
-
-# Copy source and build
+# Copy application code
 COPY . .
-RUN pnpm build
 
-# Production image
-FROM node:20-alpine AS production
-
-WORKDIR /app
-
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-# Copy package files and install production deps
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile --prod
-
-# Copy Prisma client and migrations
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/prisma ./prisma
-
-# Copy built files
-COPY --from=builder /app/dist ./dist
+# Collect static files
+RUN python manage.py collectstatic --noinput
 
 # Create non-root user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 api
-USER api
+RUN adduser --disabled-password --gecos '' appuser
+USER appuser
 
-EXPOSE 3001
+EXPOSE 8000
 
-CMD ["node", "dist/index.js"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "config.wsgi:application"]
