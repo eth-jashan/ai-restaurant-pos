@@ -30,7 +30,7 @@ export default function LoginPage() {
       });
 
       const { user, tokens } = response.data.data;
-      login(user, tokens.accessToken, tokens.refreshToken);
+      login(user, tokens.access, tokens.refresh, tokens.expires_in || 86400);
       router.push('/dashboard');
     } catch (err: unknown) {
       const error = err as { response?: { data?: { error?: { message?: string } } } };
