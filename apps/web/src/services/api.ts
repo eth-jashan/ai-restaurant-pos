@@ -71,7 +71,7 @@ export const apiClient = {
   // Auth
   auth: {
     login: (data: { email: string; password: string; restaurantSlug: string }) =>
-      api.post('/auth/login', data),
+      api.post('/auth/login/', data),
     loginWithPin: (data: { pin: string; restaurantId: string }) =>
       api.post('/auth/login/pin', data),
     register: (data: unknown) => api.post('/auth/register', data),
@@ -197,7 +197,7 @@ export const apiClient = {
   // AI
   ai: {
     sendMessage: (message: string, conversationId?: string) =>
-      api.post('/ai/message', { message, conversationId }),
+      api.post('/ai/message/', { message, conversationId }),
     confirmAction: (actionId: string) => api.post('/ai/confirm', { actionId }),
     cancelAction: (actionId: string) => api.post('/ai/cancel', { actionId }),
   },
