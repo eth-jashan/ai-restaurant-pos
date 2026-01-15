@@ -142,7 +142,7 @@ export const apiClient = {
   tables: {
     getAll: (params?: { section?: string; status?: string }) =>
       api.get('/tables', { params }),
-    getWithOrders: () => api.get('/tables/with-orders'),
+    getWithOrders: () => api.get('/tables/with-orders/'),
     getOne: (id: string) => api.get(`/tables/${id}`),
     getOrders: (id: string) => api.get(`/tables/${id}/orders`),
     create: (data: unknown) => api.post('/tables', data),
@@ -152,12 +152,12 @@ export const apiClient = {
       startNumber?: number;
       capacity?: number;
       section?: string;
-    }) => api.post('/tables/bulk', data),
+    }) => api.post('/tables/bulk/', data),
     update: (id: string, data: unknown) => api.patch(`/tables/${id}`, data),
     updateStatus: (id: string, status: string) =>
       api.patch(`/tables/${id}/status`, { status }),
     delete: (id: string) => api.delete(`/tables/${id}`),
-    getSections: () => api.get('/tables/sections/list'),
+    getSections: () => api.get('/tables/sections/list/'),
   },
 
   // Billing
@@ -167,10 +167,10 @@ export const apiClient = {
       fromDate?: string;
       toDate?: string;
       customerPhone?: string;
-    }) => api.get('/billing/invoices', { params }),
+    }) => api.get('/billing/invoices/', { params }),
     getInvoice: (id: string) => api.get(`/billing/invoices/${id}`),
     getInvoiceByOrder: (orderId: string) => api.get(`/billing/orders/${orderId}/invoice`),
-    createInvoice: (data: unknown) => api.post('/billing/invoices', data),
+    createInvoice: (data: unknown) => api.post('/billing/invoices/', data),
     applyDiscount: (id: string, discount: number, reason?: string) =>
       api.post(`/billing/invoices/${id}/discount`, { discount, reason }),
     voidInvoice: (id: string, reason: string) =>
@@ -181,7 +181,7 @@ export const apiClient = {
       method: string;
       receivedAmount?: number;
       transactionId?: string;
-    }) => api.post('/billing/payments', data),
+    }) => api.post('/billing/payments/', data),
     processSplitPayment: (
       invoiceId: string,
       payments: { amount: number; method: string }[]
@@ -189,17 +189,17 @@ export const apiClient = {
 
     // Reports
     getDailySummary: (date?: string) =>
-      api.get('/billing/reports/daily', { params: { date } }),
+      api.get('/billing/reports/daily/', { params: { date } }),
     getSalesReport: (fromDate: string, toDate: string) =>
-      api.get('/billing/reports/sales', { params: { fromDate, toDate } }),
+      api.get('/billing/reports/sales/', { params: { fromDate, toDate } }),
   },
 
   // AI
   ai: {
     sendMessage: (message: string, conversationId?: string) =>
       api.post('/ai/message/', { message, conversationId }),
-    confirmAction: (actionId: string) => api.post('/ai/confirm', { actionId }),
-    cancelAction: (actionId: string) => api.post('/ai/cancel', { actionId }),
+    confirmAction: (actionId: string) => api.post('/ai/confirm/', { actionId }),
+    cancelAction: (actionId: string) => api.post('/ai/cancel/', { actionId }),
   },
 };
 
