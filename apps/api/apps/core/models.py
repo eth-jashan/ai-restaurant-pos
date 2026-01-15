@@ -78,7 +78,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True
     )
 
-    email = models.EmailField(max_length=255)
+    email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     phone = models.CharField(max_length=20, blank=True)
 
@@ -99,7 +99,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         db_table = 'users'
-        unique_together = [['restaurant', 'email'], ['restaurant', 'pin']]
+        unique_together = [['restaurant', 'pin']]
         indexes = [
             models.Index(fields=['restaurant', 'pin']),
             models.Index(fields=['restaurant', 'role']),
