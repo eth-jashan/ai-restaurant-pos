@@ -103,30 +103,30 @@ class Command(BaseCommand):
         # Create menu items
         menu_items_data = [
             # Starters
-            {'name': 'Paneer Tikka', 'category': 'Starters', 'price': 280, 'veg': True},
-            {'name': 'Chicken Tikka', 'category': 'Starters', 'price': 320, 'veg': False},
-            {'name': 'Veg Spring Roll', 'category': 'Starters', 'price': 180, 'veg': True},
-            {'name': 'Fish Fingers', 'category': 'Starters', 'price': 350, 'veg': False},
+            {'name': 'Paneer Tikka', 'category': 'Starters', 'base_price': 280, 'food_type': 'VEG'},
+            {'name': 'Chicken Tikka', 'category': 'Starters', 'base_price': 320, 'food_type': 'NON_VEG'},
+            {'name': 'Veg Spring Roll', 'category': 'Starters', 'base_price': 180, 'food_type': 'VEG'},
+            {'name': 'Fish Fingers', 'category': 'Starters', 'base_price': 350, 'food_type': 'NON_VEG'},
             # Main Course
-            {'name': 'Paneer Butter Masala', 'category': 'Main Course', 'price': 320, 'veg': True},
-            {'name': 'Dal Makhani', 'category': 'Main Course', 'price': 250, 'veg': True},
-            {'name': 'Butter Chicken', 'category': 'Main Course', 'price': 380, 'veg': False},
-            {'name': 'Mutton Rogan Josh', 'category': 'Main Course', 'price': 450, 'veg': False},
+            {'name': 'Paneer Butter Masala', 'category': 'Main Course', 'base_price': 320, 'food_type': 'VEG'},
+            {'name': 'Dal Makhani', 'category': 'Main Course', 'base_price': 250, 'food_type': 'VEG'},
+            {'name': 'Butter Chicken', 'category': 'Main Course', 'base_price': 380, 'food_type': 'NON_VEG'},
+            {'name': 'Mutton Rogan Josh', 'category': 'Main Course', 'base_price': 450, 'food_type': 'NON_VEG'},
             # Breads
-            {'name': 'Butter Naan', 'category': 'Breads', 'price': 60, 'veg': True},
-            {'name': 'Garlic Naan', 'category': 'Breads', 'price': 70, 'veg': True},
-            {'name': 'Tandoori Roti', 'category': 'Breads', 'price': 40, 'veg': True},
+            {'name': 'Butter Naan', 'category': 'Breads', 'base_price': 60, 'food_type': 'VEG'},
+            {'name': 'Garlic Naan', 'category': 'Breads', 'base_price': 70, 'food_type': 'VEG'},
+            {'name': 'Tandoori Roti', 'category': 'Breads', 'base_price': 40, 'food_type': 'VEG'},
             # Rice
-            {'name': 'Jeera Rice', 'category': 'Rice', 'price': 180, 'veg': True},
-            {'name': 'Veg Biryani', 'category': 'Rice', 'price': 280, 'veg': True},
-            {'name': 'Chicken Biryani', 'category': 'Rice', 'price': 350, 'veg': False},
+            {'name': 'Jeera Rice', 'category': 'Rice', 'base_price': 180, 'food_type': 'VEG'},
+            {'name': 'Veg Biryani', 'category': 'Rice', 'base_price': 280, 'food_type': 'VEG'},
+            {'name': 'Chicken Biryani', 'category': 'Rice', 'base_price': 350, 'food_type': 'NON_VEG'},
             # Beverages
-            {'name': 'Masala Chai', 'category': 'Beverages', 'price': 50, 'veg': True},
-            {'name': 'Fresh Lime Soda', 'category': 'Beverages', 'price': 80, 'veg': True},
-            {'name': 'Lassi', 'category': 'Beverages', 'price': 100, 'veg': True},
+            {'name': 'Masala Chai', 'category': 'Beverages', 'base_price': 50, 'food_type': 'VEG'},
+            {'name': 'Fresh Lime Soda', 'category': 'Beverages', 'base_price': 80, 'food_type': 'VEG'},
+            {'name': 'Lassi', 'category': 'Beverages', 'base_price': 100, 'food_type': 'VEG'},
             # Desserts
-            {'name': 'Gulab Jamun', 'category': 'Desserts', 'price': 120, 'veg': True},
-            {'name': 'Rasmalai', 'category': 'Desserts', 'price': 150, 'veg': True},
+            {'name': 'Gulab Jamun', 'category': 'Desserts', 'base_price': 120, 'food_type': 'VEG'},
+            {'name': 'Rasmalai', 'category': 'Desserts', 'base_price': 150, 'food_type': 'VEG'},
         ]
 
         for item_data in menu_items_data:
@@ -136,8 +136,8 @@ class Command(BaseCommand):
                 name=item_data['name'],
                 defaults={
                     'category': category,
-                    'price': item_data['price'],
-                    'is_vegetarian': item_data['veg'],
+                    'base_price': item_data['base_price'],
+                    'food_type': item_data['food_type'],
                     'is_available': True,
                 }
             )
