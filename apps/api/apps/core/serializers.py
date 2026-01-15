@@ -50,12 +50,17 @@ class LoginSerializer(serializers.Serializer):
     """Login with email/password."""
     email = serializers.EmailField()
     password = serializers.CharField()
-    restaurant_slug = serializers.SlugField()
+    restaurantSlug = serializers.SlugField(required=False, allow_blank=True)
+    restaurant_slug = serializers.SlugField(required=False, allow_blank=True)
 
     def validate(self, attrs):
         email = attrs.get('email')
         password = attrs.get('password')
-        restaurant_slug = attrs.get('restaurant_slug')
+        # Accept both camelCase and snake_case
+        restaurant_slug = attrs.get('restaurantSlug') or attrs.get('restaurant_slug')
+
+        if not restaurant_slug:
+            raise serializers.ValidationError({'restaurantSlug': 'This field is required.'})
 
         # Find restaurant
         try:
