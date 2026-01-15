@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { Header } from '@/components/layout/Header';
+import Sidebar from '@/components/layout/Sidebar';
+import Header from '@/components/layout/Header';
 import { AIAssistantPanel } from '@/components/ai/AIAssistantPanel';
 import { useAuthStore } from '@/stores/authStore';
 import { useAIStore } from '@/stores/aiStore';
